@@ -44,6 +44,11 @@ NSString *kPFLinkedInCreationKey = @"linkedin_token_created_at";
     return user && [user isAuthenticated] && [user objectForKey:@"linkedInUser"];
 }
 
++ (BOOL)isLinkedWithInstallation:(PFInstallation *)installation
+{
+    return YES;
+}
+
 + (void)logInWithBlock:(PFUserResultBlock)block
 {
     NSString *accessToken = self.linkedInAccessToken;
@@ -128,6 +133,10 @@ NSString *kPFLinkedInCreationKey = @"linkedin_token_created_at";
     }
 }
 
++ (void)linkInstallation:(PFInstallation *)user block:(PFBooleanResultBlock)block {
+    
+}
+
 + (void)unlinkUser:(PFUser *)user block:(PFBooleanResultBlock)block
 {
     PFObject *linkedInUser = [user objectForKey:@"linkedInUser"];
@@ -163,6 +172,10 @@ NSString *kPFLinkedInCreationKey = @"linkedin_token_created_at";
     {
         block(YES, nil);
     }
+}
+
++ (void)unlinkInstallation:(PFUser *)user block:(PFBooleanResultBlock)block {
+    
 }
 
 + (BOOL)logOut

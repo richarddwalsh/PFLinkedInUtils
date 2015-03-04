@@ -32,8 +32,7 @@ extern NSInteger const kPFErrorLinkedInInvalidSession;
 ///--------------------------------------
 
 /*!
- @abstract Gets the instance of the <LIALinkedInHttpClient> object.
- 
+ @abstract Gets instance of <LIALinkedInHttpClient> object.
  @returns An instance of <LIALinkedInHttpClient> object.
  */
 + (LIALinkedInHttpClient *)linkedInHttpClient;
@@ -60,6 +59,15 @@ extern NSInteger const kPFErrorLinkedInInvalidSession;
  @returns `YES` if the user has their account linked to LinkedIn, otherwise `NO`.
  */
 + (BOOL)isLinkedWithUser:(PFUser *)user;
+
+/*!
+ @abstract Whether the installation has their account linked to LinkedIn.
+ 
+ @param installation _Installation to check for a LinkedIn link.
+ 
+ @returns `YES` if the installation has their account linked to LinkedIn, otherwise `NO`.
+ */
++ (BOOL)isLinkedWithInstallation:(PFInstallation *)installation;
 
 ///--------------------------------------
 /// @name Logging In & Creating LinkedIn-Linked Users
@@ -92,6 +100,19 @@ extern NSInteger const kPFErrorLinkedInInvalidSession;
  */
 + (void)linkUser:(PFUser *)user block:(PFBooleanResultBlock)block;
 
+/*!
+ @abstract *Asynchronously* links LinkedIn to an existing <PFInstallation>.
+ 
+ @discussion This method delegates to LinkedIn to authenticate the user,
+ and then automatically links the account to the <PFInstallation>.
+ 
+ @param user User to link to LinkedIn.
+ @param block The block to execute.
+ It should have the following argument signature: `^(BOOL *success, NSError *error)`.
+ */
++ (void)linkInstallation:(PFInstallation *)user block:(PFBooleanResultBlock)block;
+
+
 ///--------------------------------------
 /// @name Unlinking Users from LinkedIn
 ///--------------------------------------
@@ -104,6 +125,15 @@ extern NSInteger const kPFErrorLinkedInInvalidSession;
  It should have the following argument signature: `^(BOOL succeeded, NSError *error)`.
  */
 + (void)unlinkUser:(PFUser *)user block:(PFBooleanResultBlock)block;
+
+/*!
+ @abstract Makes an *asynchronous* request to unlink a installation from a LinkedIn account.
+ 
+ @param installation _Installation to unlink from LinkedIn.
+ @param block The block to execute.
+ It should have the following argument signature: `^(BOOL succeeded, NSError *error)`.
+ */
++ (void)unlinkInstallation:(PFUser *)user block:(PFBooleanResultBlock)block;
 
 ///--------------------------------------
 /// @name Logging Out
