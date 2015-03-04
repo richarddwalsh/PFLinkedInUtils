@@ -133,8 +133,45 @@ NSString *kPFLinkedInCreationKey = @"linkedin_token_created_at";
     }
 }
 
-+ (void)linkInstallation:(PFInstallation *)user block:(PFBooleanResultBlock)block {
-    
++ (void)linkInstallation:(PFInstallation *)installation block:(PFBooleanResultBlock)block {
+    NSString *accessToken = self.linkedInAccessToken;
+    NSDate *expirationDate = self.linkedInAccessTokenExpirationDate;
+    if (accessToken && expirationDate && [self.linkedInHttpClient validToken])
+    {
+        [self getProfileIDWithAccessToken:accessToken block:^(NSString *profileID, NSError *profileError) {
+            if (profileID && !profileError)
+            {
+                [self linkInstallation:installation accessToken:accessToken expirationDate:expirationDate profileID:profileID block:block];
+            }
+            else if (block)
+            {
+                block(nil, profileError);
+            }
+        }];
+    }
+    else
+    {
+        [self getAccessTokenWithBlock:^(NSString *accessToken, NSError *accessTokenError) {
+            if (accessToken && !accessTokenError)
+            {
+                [self getProfileIDWithAccessToken:accessToken block:^(NSString *profileID, NSError *profileError) {
+                    if (profileID && !profileError)
+                    {
+                        NSDate *expirationDate = self.linkedInAccessTokenExpirationDate;
+                        [self linkInstallation:installation accessToken:accessToken expirationDate:expirationDate profileID:profileID block:block];
+                    }
+                    else if (block)
+                    {
+                        block(nil, profileError);
+                    }
+                }];
+            }
+            else if (block)
+            {
+                block(nil, accessTokenError);
+            }
+        }];
+    }
 }
 
 + (void)unlinkUser:(PFUser *)user block:(PFBooleanResultBlock)block
@@ -396,6 +433,17 @@ NSString *kPFLinkedInCreationKey = @"linkedin_token_created_at";
     else if (block)
     {
         block(NO, [NSError errorWithDomain:PFParseErrorDomain code:kPFErrorLinkedInIdMissing userInfo:@{NSLocalizedDescriptionKey : @"LinkedIn Id Missing"}]);
+    }
+}
+
++ (void)linkInstallation:(PFInstallation *)installation accessToken:(NSString *)accessToken expirationDate:(NSDate *)expirationDate profileID:(NSString *)profileID block:(PFBooleanResultBlock)block
+{
+    if (accessToken && expirationDate && profileID) {
+        
+    }
+    else if (block)
+    {
+        block(NO, [NSError errorWithDomain:PFParseErrorDomain code:kPFErrorLinkedIdMissing userInfo:@{NSLocalizedDescriptionKey : @"LinkedIn Id Missing"}]);
     }
 }
 
